@@ -1,0 +1,52 @@
+---
+title: "Plotnine"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+reticulate::use_condaenv("pydata-book")
+```
+
+```{python}
+import numpy as np
+import pandas as pd
+from plotnine import *
+
+df = pd.DataFrame({
+    'date':pd.date_range('1/1/2000', freq='YE', periods=20),
+    'a': np.random.uniform(0.01,0.03,20),
+    'b': np.random.uniform(0.02,0.04,20),
+})
+df = pd.melt(df, id_vars=['date'])
+```
+
+
+```{python}
+p = (ggplot(df,aes(x='date',y='value',color='variable'))
+  + theme_light()
+  + geom_line(size=1.15)
+  + labs(x=None, y=None)
+  + scale_x_date(
+      expand=(0,0), 
+      breaks=pd.date_range(start='2001-1-1', end='2019-1-1', periods=10), 
+      labels=lambda l: [v.strftime("%Y") for v in l]
+    )
+  + scale_color_manual(('#50C878','#F75394'))
+  + theme(
+      legend_title=element_blank(),
+      legend_key=element_rect(color = "white"),
+      legend_direction='horizontal',
+      legend_position='bottom',
+      legend_box_spacing=0.25,
+      legend_background=element_blank(),
+      panel_grid_minor = element_blank(),
+      panel_grid_major_x = element_blank(),
+      panel_border = element_blank()
+  )
+)
+
+p.show()
+```
+
